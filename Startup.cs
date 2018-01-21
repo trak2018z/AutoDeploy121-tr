@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Aplikacja121.Data;
 
 namespace Aplikacja121
 {
@@ -21,6 +22,7 @@ namespace Aplikacja121
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddDbContext<Aplikacja121dbContext>();
             services.AddMvc();
         }
 
