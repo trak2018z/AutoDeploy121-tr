@@ -9,23 +9,23 @@ using Aplikacja121.Data;
 
 namespace Aplikacja121.Controllers
 {
-    public class StudentsController : Controller
+    public class MarksController : Controller
     {
         private readonly Aplikacja121dbContext _context;
 
-        public StudentsController(Aplikacja121dbContext context)
+        public MarksController(Aplikacja121dbContext context)
         {
             _context = context;
         }
 
-        // GET: Students
+        // GET: Marks
         public async Task<IActionResult> Index()
         {
-            var aplikacja121dbContext = _context.Student.Include(s => s.Class);
+            var aplikacja121dbContext = _context.Mark.Include(m => m.Student);
             return View(await aplikacja121dbContext.ToListAsync());
         }
 
-        // GET: Students/Details/5
+        // GET: Marks/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -33,43 +33,42 @@ namespace Aplikacja121.Controllers
                 return NotFound();
             }
 
-            var student = await _context.Student
-                .Include(s => s.Class)
-                .Include(s => s.Mark)
+            var mark = await _context.Mark
+                .Include(m => m.Student)
                 .SingleOrDefaultAsync(m => m.Id == id);
-            if (student == null)
+            if (mark == null)
             {
                 return NotFound();
             }
 
-            return View(student);
+            return View(mark);
         }
 
-        // GET: Students/Create
+        // GET: Marks/Create
         public IActionResult Create()
         {
-            ViewData["ClassId"] = new SelectList(_context.Class, "Id", "Id");
+            ViewData["StudentId"] = new SelectList(_context.Student, "Id", "Id");
             return View();
         }
 
-        // POST: Students/Create
+        // POST: Marks/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Surname,ClassId")] Student student)
+        public async Task<IActionResult> Create([Bind("Id,Value,Description,StudentId")] Mark mark)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(student);
+                _context.Add(mark);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ClassId"] = new SelectList(_context.Class, "Id", "Id", student.ClassId);
-            return View(student);
+            ViewData["StudentId"] = new SelectList(_context.Student, "Id", "Id", mark.StudentId);
+            return View(mark);
         }
 
-        // GET: Students/Edit/5
+        // GET: Marks/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -77,23 +76,23 @@ namespace Aplikacja121.Controllers
                 return NotFound();
             }
 
-            var student = await _context.Student.SingleOrDefaultAsync(m => m.Id == id);
-            if (student == null)
+            var mark = await _context.Mark.SingleOrDefaultAsync(m => m.Id == id);
+            if (mark == null)
             {
                 return NotFound();
             }
-            ViewData["ClassId"] = new SelectList(_context.Class, "Id", "Id", student.ClassId);
-            return View(student);
+            ViewData["StudentId"] = new SelectList(_context.Student, "Id", "Id", mark.StudentId);
+            return View(mark);
         }
 
-        // POST: Students/Edit/5
+        // POST: Marks/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Surname,ClassId")] Student student)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Value,Description,StudentId")] Mark mark)
         {
-            if (id != student.Id)
+            if (id != mark.Id)
             {
                 return NotFound();
             }
@@ -102,12 +101,12 @@ namespace Aplikacja121.Controllers
             {
                 try
                 {
-                    _context.Update(student);
+                    _context.Update(mark);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!StudentExists(student.Id))
+                    if (!MarkExists(mark.Id))
                     {
                         return NotFound();
                     }
@@ -118,11 +117,11 @@ namespace Aplikacja121.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ClassId"] = new SelectList(_context.Class, "Id", "Id", student.ClassId);
-            return View(student);
+            ViewData["StudentId"] = new SelectList(_context.Student, "Id", "Id", mark.StudentId);
+            return View(mark);
         }
 
-        // GET: Students/Delete/5
+        // GET: Marks/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -130,31 +129,31 @@ namespace Aplikacja121.Controllers
                 return NotFound();
             }
 
-            var student = await _context.Student
-                .Include(s => s.Class)
+            var mark = await _context.Mark
+                .Include(m => m.Student)
                 .SingleOrDefaultAsync(m => m.Id == id);
-            if (student == null)
+            if (mark == null)
             {
                 return NotFound();
             }
 
-            return View(student);
+            return View(mark);
         }
 
-        // POST: Students/Delete/5
+        // POST: Marks/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var student = await _context.Student.SingleOrDefaultAsync(m => m.Id == id);
-            _context.Student.Remove(student);
+            var mark = await _context.Mark.SingleOrDefaultAsync(m => m.Id == id);
+            _context.Mark.Remove(mark);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool StudentExists(int id)
+        private bool MarkExists(int id)
         {
-            return _context.Student.Any(e => e.Id == id);
+            return _context.Mark.Any(e => e.Id == id);
         }
     }
 }
